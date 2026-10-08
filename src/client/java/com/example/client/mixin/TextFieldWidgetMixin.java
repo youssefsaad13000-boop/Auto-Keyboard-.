@@ -10,12 +10,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class TextFieldWidgetMixin {
 
     @Inject(method = "onClick", at = @At("HEAD"))
-    private void onWidgetClick(double mouseX, double mouseY, CallbackInfo ci) {
+    private void autoKeyboard$onClick(
+            double mouseX,
+            double mouseY,
+            CallbackInfo ci
+    ) {
         showKeyboard();
     }
 
     @Inject(method = "setFocused", at = @At("HEAD"))
-    private void onFocusChange(boolean focused, CallbackInfo ci) {
+    private void autoKeyboard$onFocus(boolean focused, CallbackInfo ci) {
         if (focused) {
             showKeyboard();
         }
@@ -23,20 +27,42 @@ public abstract class TextFieldWidgetMixin {
 
     private void showKeyboard() {
         try {
-            Class<?> activityClass = Class.forName("net.kdt.pojavlaunch.MainActivity");
-            Object activityInstance = activityClass.getField("mInstance").get(null);
+            Class<?> activityClass =
+                    Class.forName("net.kdt.pojavlaunch.MainActivity");
 
-            if (activityInstance != null) {
-                android.app.Activity activity = (android.app.Activity) activityInstance;
-                activity.runOnUiThread(() -> {
-                    android.view.inputmethod.InputMethodManager imm = 
-                        (android.view.inputmethod.InputMethodManager) activity.getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
-                    
-                    if (imm != null) {
-                        imm.toggleSoftInput(android.view.inputmethod.InputMethodManager.SHOW_FORCED, 0);
-                    }
-                });
+            Object activity =
+                    activityClass.getField("mInstance").get(null);
+
+            if (activity == null) {
+                return;
             }
-        } catch (Exception ignored) {}
+
+            activity.getClass()
+                    .getMethod("runOnUiThread", Runnable.class)
+                    .invoke(activity, (Runnable) () -> {
+                        try {
+                            Object imm = activity.getClass()
+                                    .getMethod(
+                                            "getSystemService",
+                                            String.class
+                                    )
+                                    .invoke(activity, "input_method");
+
+                            if (imm != null) {
+                                imm.getClass()
+                                        .getMethod(
+                                                "toggleSoftInput",
+                                                int.class,
+                                                int.class
+                                        )
+                                        .invoke(imm, 2, 0);
+                            }
+                        } catch (Throwable ignored) {
+                        }
+                    });
+
+        } catch (Throwable ignored) {
+            // لا تجعل فشل الكيبورد يسبب Crash للعبة
+        }
     }
 }
