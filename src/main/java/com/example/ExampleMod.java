@@ -1,11 +1,10 @@
-package com.example.examplemod;
+package com.example;
 
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ModInitializer;
 
-public class ExampleModClient implements ClientModInitializer {
-
+public class ExampleMod implements ModInitializer {
     @Override
-    public void onInitializeClient() {
+    public void onInitialize() {
         System.out.println("[Auto Keyboard] Loaded!");
     }
 }
