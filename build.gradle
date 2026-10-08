@@ -15,11 +15,11 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
 
-    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {
@@ -43,13 +43,5 @@ java {
 jar {
     from("LICENSE") {
         rename { "${it}_${project.archives_base_name}" }
-    }
-}
-
-publishing {
-    publications {
-        create("mavenJava", MavenPublication) {
-            from components.java
-        }
     }
 }
