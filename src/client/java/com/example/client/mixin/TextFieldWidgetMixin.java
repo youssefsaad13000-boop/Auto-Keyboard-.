@@ -1,4 +1,4 @@
-package com.example.mixin;
+package com.example.client.mixin;
 
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.spongepowered.asm.mixin.Mixin;
