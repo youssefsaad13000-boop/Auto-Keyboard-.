@@ -3,23 +3,19 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.mod_version
-group = project.maven_group
+version = project.version
+group = project.group
 
 base {
-    archivesName = project.archives_base_name
-}
-
-repositories {
-    // Fabric Loom يدير مستودعات Minecraft/Fabric الأساسية
+    archivesName = "auto-keyboard"
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.officialMojangMappings()
 
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
 
 processResources {
@@ -35,15 +31,14 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-    withSourcesJar()
-
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
 }
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archives_base_name}" }
+        rename { "${it}_auto-keyboard" }
     }
 }
 
@@ -52,9 +47,5 @@ publishing {
         create("mavenJava", MavenPublication) {
             from components.java
         }
-    }
-
-    repositories {
-        // أضف Maven repository هنا إذا احتجت نشر المود
     }
 }
